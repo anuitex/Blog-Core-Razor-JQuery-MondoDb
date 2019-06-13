@@ -1,0 +1,260 @@
+﻿@model Blog.ViewModels.Post.Get.GetAllPostViewItem
+
+@{
+	ViewData["Title"] = "Post/Index";
+	var posts = Model.Posts;
+}
+
+<style>
+	.modal {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 1; /* Sit on top */
+		padding-top: 100px; /* Location of the box */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow: auto; /* Enable scroll if needed */
+		background-color: rgb(0,0,0);
+		background-color: rgba(0,0,0,0.4);
+	}
+
+	.modalComment {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 1; /* Sit on top */
+		padding-top: 100px; /* Location of the box */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow: auto; /* Enable scroll if needed */
+		background-color: rgb(0,0,0);
+		background-color: rgba(0,0,0,0.4);
+	}
+
+	.modalUpdate {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 1; /* Sit on top */
+		padding-top: 100px; /* Location of the box */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow: auto; /* Enable scroll if needed */
+		background-color: rgb(0,0,0);
+		background-color: rgba(0,0,0,0.4);
+	}
+
+	#dialog {
+		display: none;
+		position: fixed;
+		z-index: 1;
+		padding-top: 100px;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		background-color: rgb(0,0,0);
+		background-color: rgba(0,0,0,0.4);
+	}
+</style>
+
+<h2>PostEditor</h2>
+
+<table class="table">
+	<thead class="thead-dark">
+		<tr>
+			<th scope="col">Id</th>
+			<th scope="col">#Tag</th>
+			<th scope="col">Title</th>
+			<th scope="col">Text</th>
+			<th scope="col">Manage</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var post in posts)
+		{
+			<tr id="@post.Id">
+				<th>@post.Id</th>
+				<td>@post.Tag</td>ss
+				<td>@post.Title</td>
+				<td>Text</td>
+				<td>
+					<button id="@post.Id" type="button" class="btn btn-dark btnEdit">Edit</button> |
+					<button id="@post.Id" type="button" class="btn btn-dark btnDelete">Delete</button> |
+					<button id="@post.Id" type="button" class="btn btn-dark btnOpenComment">Add Comment</button>
+					<a href="/Comment/Index/@post.Id" type="button" class="btn btn-dark">Edit Comm</a> |
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<button id="btnOpen" type="button" class="btn btn-dark">Add Post</button>
+
+<div id="modal" class="modal">
+	<div id="modal-dialog" class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+				<button id="btnClose" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="formId" asp-controller="Post" asp-action="Create" method="post">
+					<div class="form-group">
+						<label for="exampleFormControlInput1">Id</label>
+						<input name="Id" class="form-control" id="inId" readonly>
+						<label for="exampleFormControlInput1">#Tag</label>
+						<input name="Tag" class="form-control" id="inTag">
+						<label for="exampleFormControlInput1">Title</label>
+						<input name="Title" class="form-control" id="inTitle">
+					</div>
+					<div class="form-group">
+						<label for="exampleFormControlTextarea1">Text</label>
+						<textarea name="Text" class="form-control" id="inText" rows="3"></textarea>
+					</div>
+					<button id="btAccept" type="submit" class="btn btn-dark btn-lg btn-block">Accept</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="modalUpdate" class="modalUpdate">
+	<div id="modal-dialog" class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+				<button id="btnCloseUpdate" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="formId" asp-controller="Post" asp-action="Update" method="post">
+					<div class="form-group">
+						<label for="exampleFormControlInput1">Id</label>
+						<input name="Id" class="form-control" id="upId" readonly>
+						<label for="exampleFormControlInput1">#Tag</label>
+						<input name="Tag" class="form-control" id="upTag">
+						<label for="exampleFormControlInput1">Title</label>
+						<input name="Title" class="form-control" id="upTitle">
+					</div>
+					<div class="form-group">
+						<label for="exampleFormControlTextarea1">Text</label>
+						<textarea name="Text" class="form-control" id="upText" rows="3"></textarea>
+					</div>
+					<button id="btAccept" type="submit" class="btn btn-dark btn-lg btn-block">Accept</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div id="modalComment" class="modalComment">
+	<div id="modal-dialog" class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+				<button id="btnCloseComment" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="formId" asp-controller="Comment" asp-action="Create" method="post">
+					<div class="form-group">
+						<label for="exampleFormControlInput1">PostId</label>
+						<input name="PostId" class="form-control" id="PostId" readonly>
+						<label for="exampleFormControlInput1">User Name</label>
+						<input name="Name" class="form-control" id="inName">
+					</div>
+					<div class="form-group">
+						<label for="exampleFormControlTextarea1">Text</label>
+						<textarea name="Text" class="form-control" id="inComText" rows="3"></textarea>
+					</div>
+					<button id="btAccept" type="submit" class="btn btn-dark btn-lg btn-block">Accept</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script> @*will move to head*@
+
+<script type="text/jscript">
+	var modal = document.getElementById("modal");
+	var modalUpdate = document.getElementById("modalUpdate");
+	var modalComment = document.getElementById("modalComment");
+
+	window.onclick = function (event) {
+		if (event.target == modal) {
+			modal.style.display = "none";
+		}
+		if (event.target == modalComment) {
+			modalComment.style.display = "none";
+		}
+		if (event.target == modalUpdate) {
+			modalUpdate.style.display = "none";
+		}
+	}
+
+	$('#btnOpen').click(function () {
+		modal.style.display = "block";
+	})
+
+	$('#btnClose').click(function () {
+		modal.style.display = "none";
+	})
+
+	$('#btnCloseUpdate').click(function () {
+		modalUpdate.style.display = "none";
+	})
+
+	$('.btnDelete').click(function (item) {
+		var itemId = item.target.id;
+		var url = "/Post/Delete/";
+		$.get(url, { Id: itemId }, function (result) {
+			console.log(result)
+			$("#" + itemId).html('');
+		});
+	})
+
+	$('.btnEdit').click(function (item) {
+		modalUpdate.style.display = "block";
+		var itemId = item.target.id;
+		var url = "/Post/Read/";
+		$.get(url, { Id: itemId }, function (result) {
+			console.log(result);
+			formComplete(result.id, result.tag, result.title, result.text);
+		});
+	})
+
+	function formComplete(id, tag, title, text) {
+		document.getElementById('upId').value = id;
+		document.getElementById('upTag').value = tag;
+		document.getElementById('upTitle').value = title;
+		document.getElementById('upText').value = text;
+	}
+
+	//
+
+	$('.btnOpenComment').click(function (item) {
+		modalComment.style.display = "block";
+		var itemId = item.target.id;
+		document.getElementById('PostId').value = itemId;
+	})
+
+	$('#btnCloseComment').click(function () {
+		modalComment.style.display = "none";
+	})
+
+</script>

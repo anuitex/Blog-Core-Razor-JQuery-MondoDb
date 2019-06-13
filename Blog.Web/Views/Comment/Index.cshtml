@@ -1,0 +1,125 @@
+﻿@model Blog.ViewModels.Commet.Get.GetAllCommentViewItem
+
+@{
+	ViewData["Title"] = "Comment/Index";
+}
+
+<style>
+	.modalComment {
+		display: none;
+		position: fixed;
+		z-index: 1;
+		padding-top: 100px;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		background-color: rgb(0,0,0);
+		background-color: rgba(0,0,0,0.4);
+	}
+</style>
+
+<h2>ShowAllComments</h2>
+
+<h2>Edit</h2>
+
+<table class="table">
+	<thead class="thead-dark">
+		<tr>
+			<th scope="col">PostId</th>
+			<th scope="col">Name</th>
+			<th scope="col">Text</th>
+			<th scope="col">Manage</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var comment in Model.Comments)
+		{
+			<tr id="@comment.Id">
+				<th>@comment.PostId</th>
+				<th>@comment.Name</th>
+				<th>@comment.Text</th>
+				<td>
+					<button id="@comment.Id" type="button" class="btn btn-dark btnEditComment">Edit</button> |
+					<button id="@comment.Id" type="button" class="btn btn-dark btnDeleteComment">Delete</button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<div id="modalComment" class="modalComment">
+	<div id="modal-dialog" class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+				<button id="btnCloseComment" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="formId" asp-controller="Comment" asp-action="Update" method="post">
+					<div class="form-group">
+						<label for="exampleFormControlInput1">Id</label>
+						<input name="Id" class="form-control" id="Id" readonly>
+						<label for="exampleFormControlInput1">Post Id</label>
+						<input name="PostId" class="form-control" id="inPostId">
+						<label for="exampleFormControlInput1">User Name</label>
+						<input name="Name" class="form-control" id="inName">
+					</div>
+					<div class="form-group">
+						<label for="exampleFormControlTextarea1">Text</label>
+						<textarea name="Text" class="form-control" id="inComText" rows="3"></textarea>
+					</div>
+					<button id="btAccept" type="submit" class="btn btn-dark btn-lg btn-block">Accept</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script> @*will move to head*@
+
+<script type="text/jscript">
+	var modalComment = document.getElementById("modalComment");
+
+	window.onclick = function (event) {
+		if (event.target == modalComment) {
+			modalComment.style.display = "none";
+		}
+	}
+
+	$('#btnCloseComment').click(function () {
+		modalComment.style.display = "none";
+	})
+
+	$('.btnDeleteComment').click(function (item) {
+		var itemId = item.target.id;
+		var url = "/Comment/Delete/";
+		$.get(url, { Id: itemId }, function (result) {
+			console.log(result)
+			$("#" + itemId).html('');
+		});
+	})
+
+	$('.btnEditComment').click(function (item) {
+		debugger
+		modalComment.style.display = "block";
+		var itemId = item.target.id;
+		var url = "/Comment/Read/";
+		$.get(url, { Id: itemId }, function (result) {
+			console.log(result);
+			formCommentComplete(result.id, result.postId, result.name, result.text);
+		});
+	})
+
+	function formCommentComplete(id, postId, name, text) {
+		document.getElementById('Id').value = id;
+		document.getElementById('inPostId').value = postId;
+		document.getElementById('inName').value = name;
+		document.getElementById('inComText').value = text;
+	}
+
+</script>

@@ -1,0 +1,35 @@
+﻿@model Blog.ViewModels.Home.AllPosts.AllPostHomeViewItem
+
+@{
+	ViewData["Title"] = "Home Page";
+}
+
+<img src="@Url.Content("~/Image/red.jpg")" alt="BadImage" />
+
+@foreach (var post in Model.Posts)
+{
+	<div class="card" style="width: 18rem;">
+		@*<img src="... class="card-img-top" alt="BadImage">*@
+		<div class="card-body">
+			<h5 class="card-title">Title: @post.Title</h5>
+			<div class="card-title">Tag: @post.Tag</div>
+			<p class="card-text">@post.Text</p>
+			<a id="@post.Id" href="Home/Get/@post.Id" class="btn btn-primary btnOpen">Open</a>
+		</div>
+	</div><br>
+}
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script> @*will move to head*@
+
+<script type="text/jscript">
+
+	$('.btnOpen').click(function (item) {
+		var itemId = item.target.id;
+		var url = "/Home/Get/";
+		$.get(url, { id: itemId }, function (response) {
+
+		});
+	})
+
+</script>
